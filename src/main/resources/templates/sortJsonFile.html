@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Sort Json File</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+#overlay { 'opacity ' :0.4, 'position' : 'absolute', 'top' : 0, 'left' : 0,
+	'background-color' : 'black', 'width' : '100%', 'z-index' : 5000
+	
+}
+
+.txtCopy {
+	font-size: 40px;
+	color: green;
+	display: none;
+}
+</style>
+</head>
+<body>
+	<br>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">Input JSON File</div>
+					<div class="panel-body">
+						<form action="/language/sortJsonFile" id="formId" method="post">
+							<div class="form-group">
+								<label for="address">JSON Data:</label>
+								<textarea class="form-control" id="jsonDataId" name="jsonData"
+									rows="20" placeholder="Enter json data"></textarea>
+							</div>
+							<button type="button" class="btn btn-success"
+								onclick="return verify();">Sort</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Output JSON File
+						<button type="button" class="btn btn-sm btn-success pull-right"
+							onclick="copyToClipboard()">Copy</button>
+					</div>
+					<div class="panel-body">
+						<div id="txtCopId" class="txtCopy">Text copied</div>
+						<textarea id="response" rows="25" class="form-control"
+							readonly="readonly"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id='overlay' style="display: none;">
+		<img src="../loading.gif" alt=""></img>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$("#jsonDataId").focus();
+		});
+
+		function verify() {
+			$.ajax({
+				url : $("#formId").attr("action"),
+				type : $("#formId").attr("method"),
+				data : {
+					"jsonData" : $("#jsonDataId").val()
+				},
+				success : function(data) {
+					if (data.httpStatus == "INTERNAL_SERVER_ERROR") {
+						alert(data.message);
+					} else {
+						$("#response").val(
+								JSON.stringify(data.data, null, '\t'));
+					}
+				},
+				error : function() {
+					alert("Unable to load details");
+				}
+			})
+		}
+
+		function copyToClipboard() {
+			$("#response").focus();
+			$("#response").select();
+			document.execCommand('copy');
+			$("#txtCopId").show().fadeOut(1200);
+		}
+	</script>
+</body>
+</html>

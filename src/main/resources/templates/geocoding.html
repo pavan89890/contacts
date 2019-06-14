@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Geocoding</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+#overlay { 'opacity ' :0.4, 'position' : 'absolute', 'top' : 0, 'left' : 0,
+	'background-color' : 'black', 'width' : '100%', 'z-index' : 5000
+	
+}
+</style>
+</head>
+<body>
+	<br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Geocoding</div>
+			<div class="panel-body">
+				<p th:if="${errorMsg!=null}" th:text="${errorMsg}"
+					style="color: red;"></p>
+				<form action="/geocoding" id="formId" method="post">
+					<div class="form-group">
+						<label for="address">Address:</label>
+						<textarea class="form-control" id="address" name="searchtext"
+							placeholder="Enter address"></textarea>
+					</div>
+					<button type="button" class="btn btn-success"
+						onclick="return verify();">Get Coordinates</button>
+				</form>
+				<br>
+				<p id="response"></p>
+			</div>
+		</div>
+	</div>
+	<div id='overlay' style="display: none;">
+		<img src="../loading.gif" alt=""></img>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$("#address").focus();
+		});
+
+		function verify() {
+			if ($("#address").val().trim() == "") {
+				alert("Please enter address");
+				$("#address").focus();
+				return false;
+			} else {
+				$.ajax({
+					url : $("#formId").attr("action"),
+					type : $("#formId").attr("method"),
+					data : $("#formId").serialize(),
+					success : function(data) {
+						$("#response").html(data);
+					},
+					error : function() {
+						alert("Unable to load details");
+					}
+				})
+				return true;
+			}
+		}
+	</script>
+</body>
+</html>

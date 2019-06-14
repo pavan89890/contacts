@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Contacts</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link
+	href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"
+	rel="stylesheet" />
+</head>
+<body>
+	<br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				Contacts<a class="btn btn-success btn-xs pull-right"
+					href="/addContact">Add</a>
+			</div>
+			<div class="panel-body">
+				<table class="display" style="width: 100%" id="contactsTableId">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Name</th>
+							<th>Mobile</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="contact:${contacts}">
+							<td th:text="${contact.id}"></td>
+							<td th:text="${contact.name}"></td>
+							<td th:text="${contact.mobile}"></td>
+							<td><a class="btn btn-info btn-xs"
+								th:href="'/updateContact?contact='+${contact.id}">Update</a>&nbsp;<a
+								class="btn btn-danger btn-xs"
+								th:href="'/deleteContact?contact='+${contact.id}">Delete</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript"
+		src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('#contactsTableId').DataTable();
+		});
+	</script>
+</body>
+</html>

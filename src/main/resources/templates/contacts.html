@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Contacts</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<br>
+	<div class="container">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Contacts</div>
+			<div class="panel-body">
+				<p th:if="${errorMsg!=null}" th:text="${errorMsg}"
+					style="color: red;"></p>
+				<form action="/saveContact" id="formId" method="post">
+					<input type="hidden" th:value="${contact!=null?contact.id:'0'}"
+						name="id">
+					<div class="form-group">
+						<label for="name">Name:</label> <input type="text"
+							class="form-control" id="name" name="name"
+							placeholder="Enter Name"
+							th:value="${contact!=null?contact.name:''}">
+					</div>
+					<div class="form-group">
+						<label for="mobile">Mobile Number:</label> <input type="text"
+							class="form-control" id="mobile" name="mobile"
+							placeholder="Enter Mobile Number" maxlength="10"
+							th:value="${contact!=null?contact.mobile:''}">
+					</div>
+					<button type="button" class="btn btn-success"
+						th:if="${contact==null}" onclick="return verify();">Add
+						Contact</button>
+					<button type="button" class="btn btn-success"
+						th:if="${contact!=null}" onclick="return verify();">Update
+						Contact</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$("#name").focus();
+		});
+
+		function verify() {
+			if ($("#name").val().trim() == "") {
+				alert("Please enter name");
+				$("#name").focus();
+				return false;
+			} else if ($("#mobile").val().trim() == "") {
+				alert("Please enter mobile number");
+				$("#mobile").focus();
+				return false;
+			} else if (isNaN($("#mobile").val().trim())) {
+				alert("Please enter numbericals for mobile number");
+				$("#mobile").focus();
+				return false;
+			} else if ($("#mobile").val().trim().length != 10) {
+				alert("Please enter 10 digits for mobile number");
+				$("#mobile").focus();
+				return false;
+			} else {
+				$("#formId")[0].submit();
+				return true;
+			}
+		}
+	</script>
+</body>
+</html>
