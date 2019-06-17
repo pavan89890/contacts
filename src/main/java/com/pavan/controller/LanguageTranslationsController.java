@@ -1,12 +1,9 @@
 package com.pavan.controller;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +20,8 @@ import com.pavan.entity.bean.ApiResponse;
 @RequestMapping("/language/")
 public class LanguageTranslationsController {
 
+	private String errorMessage = "";
+
 	@RequestMapping(method = RequestMethod.GET, value = "sortJsonFile")
 	public String sortJsonFile() {
 		return "sortJsonFile";
@@ -33,39 +32,27 @@ public class LanguageTranslationsController {
 	public ApiResponse sortJsonFile(@RequestParam(value = "jsonData", required = true) String jsonStr) {
 
 		ApiResponse response = new ApiResponse(HttpStatus.OK, "Success", null);
-		String errorMessage = "";
 
-		if (jsonStr == null) {
-			errorMessage = "ERROR-Please enter json data";
-			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, null);
-			return response;
-		}
-
-		JSONObject jsonData;
-		try {
-			jsonData = new JSONObject(jsonStr);
-		} catch (JSONException e1) {
-			errorMessage = "ERROR-" + e1.getMessage();
-			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, null);
+		if (jsonStr == null || jsonStr.isEmpty()) {
+			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR-Please enter json data", null);
 			return response;
 		}
 
 		Map<String, String> jsonMap = new TreeMap<String, String>();
 
 		try {
-			@SuppressWarnings("unchecked")
-			Iterator<String> itr = jsonData.keys();
-
-			while (itr.hasNext()) {
-				String next = itr.next();
-				jsonMap.put(next, String.valueOf(jsonData.get(String.valueOf(next))));
+			String jsonStr2 = jsonStr.replace("{", "").replace("}", "").trim();
+			for (String line : jsonStr2.split("\n")) {
+				line = line.replaceAll("\"", "").replaceAll(",", "");
+				String key = line.split(":")[0].trim();
+				String value = line.split(":")[1].trim();
+				jsonMap.put(key, value);
 			}
-
 		} catch (Exception e) {
-			errorMessage = "ERROR-" + e.getMessage();
-			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, null);
+			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR-" + e.getMessage(), null);
 			return response;
 		}
+
 		response = new ApiResponse(HttpStatus.OK, "Success", jsonMap);
 		return response;
 	}
@@ -81,12 +68,10 @@ public class LanguageTranslationsController {
 			@RequestParam(value = "translations[]", required = true) String[] translations) {
 		ApiResponse response = new ApiResponse(HttpStatus.OK, "Success", null);
 
-		String errorMessage = "";
-		Map<Boolean, String> validation = validateJsonFile(labels, translations);
+		boolean isValidJson = validateJsonFile(labels, translations);
 
-		if (validation != null && validation.containsKey(Boolean.FALSE)) {
-			errorMessage = "ERROR-" + validation.get(Boolean.FALSE);
-			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, null);
+		if (!isValidJson) {
+			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR-" + errorMessage, null);
 			return response;
 		}
 
@@ -97,28 +82,24 @@ public class LanguageTranslationsController {
 				jsonMap.put(labels[i], translations[i]);
 			}
 		} catch (Exception e) {
-			errorMessage = "ERROR-" + e.getMessage();
-			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, null);
+			response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, "ERROR-" + e.getMessage(), null);
 		}
 		response = new ApiResponse(HttpStatus.OK, "Success", jsonMap);
 		return response;
 	}
 
-	public Map<Boolean, String> validateJsonFile(String[] labels, String[] translations) {
-
-		Map<Boolean, String> value = new HashMap<>();
+	public boolean validateJsonFile(String[] labels, String[] translations) {
 
 		if (labels == null || labels.length == 0) {
-			value.put(Boolean.FALSE, "Please Enter Labels");
-			return value;
+			errorMessage = "Please Enter Labels";
+			return false;
 		} else if (translations == null || translations.length == 0) {
-			value.put(Boolean.FALSE, "Please Enter Translations");
-			return value;
+			errorMessage = "Please Enter Translations";
+			return false;
 		} else if (labels.length != translations.length) {
-			value.put(Boolean.FALSE, "Lebels count must be equal to Translations count");
-			return value;
+			errorMessage = "Lebels count must be equal to Translations count";
+			return false;
 		}
-		value.put(Boolean.TRUE, "Valid");
-		return value;
+		return true;
 	}
 }

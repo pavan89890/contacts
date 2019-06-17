@@ -37,14 +37,14 @@
 									<div class="form-group">
 										<label for="labelsId">Label Names:</label>
 										<textarea class="form-control" id="labelsId" name="labels"
-											rows="20" placeholder="Enter Labels"></textarea>
+											rows="35" placeholder="Enter Labels"></textarea>
 										<span class="badge" id="labelsCntId"></span>
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<label for="translationsId">Translations:</label>
-										<textarea class="form-control" id="translationsId" rows="20"
+										<textarea class="form-control" id="translationsId" rows="35"
 											name="translations" placeholder="Enter Translations"></textarea>
 										<span class="badge" id="transCntId"></span>
 									</div>
@@ -65,7 +65,7 @@
 					</div>
 					<div class="panel-body">
 						<div id="txtCopId" class="txtCopy">Text copied</div>
-						<textarea id="response" rows="25" class="form-control"
+						<textarea id="response" rows="40" class="form-control"
 							readonly="readonly"></textarea>
 					</div>
 				</div>
@@ -76,11 +76,16 @@
 		<img src="../loading.gif" alt=""></img>
 	</div>
 	<script>
-		$(document).ready(function() {
-			$("#labelsId").focus();
-		});
+		$(document)
+				.ready(
+						function() {
+							$("#labelsId")
+									.val(
+											"TETRAPAK | Track & Trace\n Leg1\n Load ID\n Global ID\n Carrier Name\n Truck Number\n Order Number\n Delivery Order\n Pickup\n Delivery\n Leg2\n Load ID\n Global ID\n B/L\n Order Number\n FF\n Liner\n Vessel\n Voyage\n POL\n POD\n Location type\n City\n Carrier Name\n Pickup Date Time\n Status\n Location Name\n Load ID\n Container Number\n Delivery Date Time\n List of Load ID's\n Status\n PickUp\n Final Delivery\n Planned Route\n Actual Route\n Air\n Vessel\n TL\n Rail\n Actual Route");
+							$("#labelsId").focus();
+						});
 
-		$("#labelsId").on("change", function() {
+		$("#labelsId").on("load focus change", function() {
 			$("#labelsCntId").html($("#labelsId").val().split("\n").length);
 		});
 
